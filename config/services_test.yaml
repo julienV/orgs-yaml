@@ -1,0 +1,3 @@
+services:
+    App\Service\DataProvider:
+        $dataFilePath: '%kernel.project_dir%/organizations.test.yaml'
