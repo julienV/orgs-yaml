@@ -81,6 +81,16 @@ class DataProvider
 		return $data;
 	}
 
+	public function createOrganisation(Organisation $data) : Organisation
+	{
+		$orgs = $this->getOrganisationsList();
+		$orgs[] = $data;
+
+		$this->write($orgs);
+
+		return $data;
+	}
+
 	/**
 	 * @param   Organisation[]  $organisations
 	 *

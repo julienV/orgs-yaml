@@ -36,4 +36,9 @@ class OrganisationsRepository
 	{
 		return $this->dataProvider->updateOneOrganisation($name, $data);
 	}
+
+	public function createOrganisation(Organisation $data) : Organisation
+	{
+		return $this->dataProvider->createOrganisation($data);
+	}
 }

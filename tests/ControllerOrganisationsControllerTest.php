@@ -200,4 +200,37 @@ YAMl;
 
 		self::assertEmpty($responseData['users']);
 	}
+
+
+	public function testCreateOrganisation() : void
+	{
+		$client = static::createClient();
+		$client->request('POST', '/organisations',
+			[],
+			[],
+			['CONTENT_TYPE' => 'application/json'],
+			json_encode([
+				'name' => 'Test org',
+				'description' => 'some description',
+				'users' => [
+					[
+						'name' => 'brian stuff',
+						'password' => 'whereisbrian',
+						'role' => ["SUPER AMIN", "BUDDY"]
+					]
+				]]
+			)
+		);
+		$response = $client->getResponse();
+		$this->assertSame(201, $response->getStatusCode());
+
+		$client->request('GET', '/organisations/' . urlencode('Test org'));
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+		$responseData = json_decode($response->getContent(), true);
+
+		self::assertEquals('brian stuff', $responseData['users'][0]['name']);
+		self::assertEquals('whereisbrian', $responseData['users'][0]['password']);
+		self::assertEquals(["SUPER AMIN", "BUDDY"], $responseData['users'][0]['role']);
+	}
 }
