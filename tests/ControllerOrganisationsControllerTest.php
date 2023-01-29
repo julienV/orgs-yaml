@@ -112,4 +112,92 @@ YAMl;
 		$response = $client->getResponse();
 		$this->assertSame(404, $response->getStatusCode());
 	}
+
+	public function testUpdateOrganisationDescription() : void
+	{
+		$client = static::createClient();
+		$client->request('PUT', '/organisations/Google',
+			[],
+			[],
+			['CONTENT_TYPE' => 'application/json'],
+			json_encode(['description' => 'updated'])
+		);
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+
+		$client->request('GET', '/organisations/Google');
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+		$responseData = json_decode($response->getContent(), true);
+
+		self::assertEquals('updated', $responseData['description']);
+	}
+
+	public function testUpdateOrganisationName() : void
+	{
+		$client = static::createClient();
+		$client->request('PUT', '/organisations/Google',
+			[],
+			[],
+			['CONTENT_TYPE' => 'application/json'],
+			json_encode(['name' => 'Goooooogle'])
+		);
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+
+		$client->request('GET', '/organisations/Goooooogle');
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+		$responseData = json_decode($response->getContent(), true);
+
+		self::assertEquals('Goooooogle', $responseData['name']);
+	}
+
+	public function testUpdateOrganisationUsers() : void
+	{
+		$client = static::createClient();
+		$client->request('PUT', '/organisations/Google',
+			[],
+			[],
+			['CONTENT_TYPE' => 'application/json'],
+			json_encode(['users' => [
+				[
+					'name' => 'brian stuff',
+					'password' => 'whereisbrian',
+					'role' => ["SUPER AMIN", "BUDDY"]
+				]
+			]])
+		);
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+
+		$client->request('GET', '/organisations/Google');
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+		$responseData = json_decode($response->getContent(), true);
+
+		self::assertEquals('brian stuff', $responseData['users'][0]['name']);
+		self::assertEquals('whereisbrian', $responseData['users'][0]['password']);
+		self::assertEquals(["SUPER AMIN", "BUDDY"], $responseData['users'][0]['role']);
+	}
+
+	public function testUpdateOrganisationUsersEmpty() : void
+	{
+		$client = static::createClient();
+		$client->request('PUT', '/organisations/Google',
+			[],
+			[],
+			['CONTENT_TYPE' => 'application/json'],
+			json_encode(['users' => []])
+		);
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+
+		$client->request('GET', '/organisations/Google');
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+		$responseData = json_decode($response->getContent(), true);
+
+		self::assertEmpty($responseData['users']);
+	}
 }

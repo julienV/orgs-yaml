@@ -31,4 +31,9 @@ class OrganisationsRepository
 	{
 		$this->dataProvider->deleteOrganisationByName($name);
 	}
+
+	public function updateOneOrganisation(string $name, Organisation $data) : Organisation
+	{
+		return $this->dataProvider->updateOneOrganisation($name, $data);
+	}
 }

@@ -61,6 +61,26 @@ class DataProvider
 		$this->write($orgs);
 	}
 
+	public function updateOneOrganisation(string $name, Organisation $data) : Organisation
+	{
+		if (!$this->getOrganisationByName($name)) {
+			throw new \InvalidArgumentException('not found');
+		}
+
+		$orgs = $this->getOrganisationsList();
+
+		foreach ($orgs as &$org)
+		{
+			if ($org->getName() == $name) {
+				$org = $data;
+			}
+		}
+
+		$this->write($orgs);
+
+		return $data;
+	}
+
 	/**
 	 * @param   Organisation[]  $organisations
 	 *

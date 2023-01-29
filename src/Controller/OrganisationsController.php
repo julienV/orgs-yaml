@@ -1,7 +1,9 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\OrganisationsRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -58,6 +60,53 @@ class OrganisationsController extends AbstractController
 		catch (\Exception $exception)
 		{
 			return new JsonResponse(new \HttpException('Something went wrong'), 500);
+		}
+	}
+
+	/**
+	 * @Route("/organisations/{name}", methods={"PUT"})
+	 */
+	public function updateOrganisation(string $name, Request $request)
+	{
+		$organisation = $this->organisationsRepository->findOneByName($name);
+
+		if (!$organisation) {
+			return new JsonResponse(new NotFoundHttpException('This organisation does not exist'), 404);
+		}
+
+		$data = json_decode($request->getContent(), true);
+
+		if (!empty($data['name']))
+		{
+			$organisation->setName($data['name']);
+		}
+
+		if (!empty($data['description']))
+		{
+			$organisation->setDescription($data['description']);
+		}
+
+		if (isset($data['users']))
+		{
+			$users = array_map(
+				function(array $data)
+				{
+					return User::fromArray($data);
+				},
+				$data['users']
+			);
+			$organisation->setUsers($users);
+		}
+
+		try
+		{
+			$this->organisationsRepository->updateOneOrganisation($name, $organisation);
+
+			return new JsonResponse($organisation);
+		}
+		catch (\Exception $e)
+		{
+			return new JsonResponse($e, $e->getCode());
 		}
 	}
 }
