@@ -30,4 +30,4 @@ services:
     # please note that last definitions always *replace* previous ones
 
     App\Service\DataProvider:
-        $dataFilePath: '%env(DATA_FILE_URL)%'
+        $dataFilePath: '%env(DATA_FILE_PATH)%'
