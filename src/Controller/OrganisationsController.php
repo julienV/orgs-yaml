@@ -39,4 +39,25 @@ class OrganisationsController extends AbstractController
 
 		return new JsonResponse($found);
 	}
+
+	/**
+	 * @Route("/organisations/{name}", methods={"DELETE"})
+	 */
+	public function deleteOrganisation(string $name) : JsonResponse
+	{
+		try
+		{
+			$this->organisationsRepository->deleteOneByName($name);
+
+			return new JsonResponse(null, 204);
+		}
+		catch (\InvalidArgumentException $exception)
+		{
+			return new JsonResponse(new NotFoundHttpException('This organisation does not exist'), 404);
+		}
+		catch (\Exception $exception)
+		{
+			return new JsonResponse(new \HttpException('Something went wrong'), 500);
+		}
+	}
 }

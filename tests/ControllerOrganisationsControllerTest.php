@@ -6,6 +6,63 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ControllerOrganisationsControllerTest extends WebTestCase
 {
+	protected function setUp() : void
+	{
+		$data = <<<YAMl
+organizations:
+  -
+    name: "Facebook"
+    description: "Facebook [ˈfeɪsbʊk] est une société américaine créée en 2004 par Mark Zuckerberg. Initialement concentrée sur le réseau social Facebook, la compagnie a racheté Instagram en 2012, ainsi que WhatsApp et Oculus VR en 2014"
+    users:
+      -
+        name: Mark
+        role: ["ADMIN", "CEO"]
+        password: demo
+      -
+        name: Jean
+        role: ["ADMIN", "CTO"]
+        password: demo2
+      -
+        name: Pierre
+        role: ["SALES"]
+        password: demo3
+  -
+    name: "Google"
+    description: "Google LLC /ˈguːgəl/ est une entreprise américaine de services technologiques fondée en 1998 dans la Silicon Valley, en Californie, par Larry Page et Sergey Brin, créateurs du moteur de recherche Google. C'est une filiale de la société Alphabet depuis août 2015"
+    users:
+      -
+        name: Ive
+        role: ["ADMIN", "CEO"]
+        password: demo
+      -
+        name: Martin
+        role: ["ADMIN", "CTO"]
+        password: demo2
+      -
+        name: Jacques
+        role: ["SALES"]
+        password: demo3
+  -
+    name: "YouTube"
+    description: "YouTube est un site web d’hébergement de vidéos et un média social sur lequel les utilisateurs peuvent envoyer, regarder, commenter, évaluer et partager des vidéos"
+    users:
+      -
+        name: Nathalie
+        role: ["ADMIN", "CEO"]
+        password: demo
+      -
+        name: Martin
+        role: ["ADMIN", "CTO"]
+        password: demo2
+      -
+        name: Sophie
+        role: ["SALES"]
+        password: demo3
+
+YAMl;
+		file_put_contents(dirname(__DIR__) . '/organizations.test.yaml', $data);
+	}
+
 	public function testGetOrganisations() : void
 	{
 		$client = static::createClient();
@@ -36,6 +93,22 @@ class ControllerOrganisationsControllerTest extends WebTestCase
 		$client = static::createClient();
 		$client->request('GET', '/organisations/someotherorg');
 
+		$response = $client->getResponse();
+		$this->assertSame(404, $response->getStatusCode());
+	}
+
+	public function testDeleteOrganisation() : void
+	{
+		$client = static::createClient();
+		$client->request('GET', '/organisations/Google');
+		$response = $client->getResponse();
+		$this->assertSame(200, $response->getStatusCode());
+
+		$client->request('DELETE', '/organisations/Google');
+		$response = $client->getResponse();
+		$this->assertSame(204, $response->getStatusCode());
+
+		$client->request('GET', '/organisations/Google');
 		$response = $client->getResponse();
 		$this->assertSame(404, $response->getStatusCode());
 	}

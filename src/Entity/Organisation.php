@@ -69,6 +69,17 @@ class Organisation implements \JsonSerializable
 		];
 	}
 
+	public function toArray() : array
+	{
+		return [
+			'name' => $this->name,
+			'description' => $this->description,
+			'users' => $this->users ? array_map(function(User $user) {
+				return $user->toArray();
+			}, $this->users) : [],
+		];
+	}
+
 	public static function fromArray(array $data) : self
 	{
 		$instance = new static;

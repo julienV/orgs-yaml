@@ -20,4 +20,4 @@
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 
-organizations.yaml
+organizations.test.yaml

@@ -44,4 +44,41 @@ class DataProvider
 
 		return null;
 	}
+
+	public function deleteOrganisationByName(string $name) : void
+	{
+		if (!$this->getOrganisationByName($name)) {
+			throw new \InvalidArgumentException('not found');
+		}
+
+		$orgs = array_filter(
+			$this->getOrganisationsList(),
+			function (Organisation $org) use ($name) {
+				return $org->getName() !== $name;
+			}
+		);
+
+		$this->write($orgs);
+	}
+
+	/**
+	 * @param   Organisation[]  $organisations
+	 *
+	 * @return void
+	 */
+	private function write(array $organisations)
+	{
+		$data = [
+			'organizations' => array_values(array_map(
+				function (Organisation $org) {
+					return $org->toArray();
+				},
+				$organisations
+			))
+		];
+
+		$yaml = Yaml::dump($data, 5, 4);
+
+		file_put_contents($this->dataFilePath, $yaml);
+	}
 }

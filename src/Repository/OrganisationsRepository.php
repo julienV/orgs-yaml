@@ -26,4 +26,9 @@ class OrganisationsRepository
 	{
 		return $this->dataProvider->getOrganisationByName($name);
 	}
+
+	public function deleteOneByName(string $name) : void
+	{
+		$this->dataProvider->deleteOrganisationByName($name);
+	}
 }

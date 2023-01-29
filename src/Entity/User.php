@@ -64,7 +64,16 @@ class User implements \JsonSerializable
 		return [
 			'name' => $this->name,
 			'password' => $this->password,
-			'roles' => $this->roles,
+			'role' => $this->roles,
+		];
+	}
+
+	public function toArray() : array
+	{
+		return [
+			'name' => $this->name,
+			'password' => $this->password,
+			'role' => $this->roles,
 		];
 	}
 
